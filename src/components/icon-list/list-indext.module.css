@@ -1,0 +1,26 @@
+.btn {
+  width: 28px;
+  height: 28px;
+
+  position: relative;
+  box-sizing: content-box;
+
+  padding: 10px;
+}
+
+.count {
+  color: white;
+  background-color: #ff6060;
+
+  font-size: 11px;
+  font-weight: 900;
+  text-align: left;
+  border-radius: 8px;
+
+  position: absolute;
+  bottom: -2px;
+  left: 28px;
+  z-index: 9;
+
+  padding: 4px 8px;
+}

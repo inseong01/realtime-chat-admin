@@ -1,0 +1,95 @@
+@font-face {
+  font-family: 'NanumSquareNeo';
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.eot);
+  src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.eot?#iefix)
+      format('embedded-opentype'),
+    url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.woff)
+      format('woff'),
+    url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.ttf)
+      format('truetype');
+}
+
+@font-face {
+  font-family: 'NanumSquareNeo';
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.eot);
+  src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.eot?#iefix)
+      format('embedded-opentype'),
+    url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.woff)
+      format('woff'),
+    url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.ttf)
+      format('truetype');
+}
+
+@font-face {
+  font-family: 'NanumSquareNeo';
+  font-weight: 900;
+  font-display: swap;
+  src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.eot);
+  src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.eot?#iefix)
+      format('embedded-opentype'),
+    url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.woff)
+      format('woff'),
+    url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.ttf)
+      format('truetype');
+}
+
+* {
+  font-family: 'NanumSquareNeo', 'Noto Sans', sans-serif !important;
+  font-weight: inherit;
+
+  color: inherit;
+  background-color: transparent;
+
+  box-sizing: border-box;
+
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+button {
+  background-color: #ffffff00;
+
+  border: 1px solid transparent;
+  border-radius: 8px;
+
+  font-size: 0.9em;
+  font-family: inherit;
+
+  cursor: pointer;
+  padding: 4px;
+}
+
+button:focus,
+button:focus-visible,
+input:focus {
+  outline: none;
+}
+
+ul,
+ol,
+li {
+  list-style: none;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+input {
+  border: none;
+}
