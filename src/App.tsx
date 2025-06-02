@@ -15,10 +15,8 @@ import CategoryContentDisplay from './feature/category-display/display-index';
 // https://supabase.com/docs/guides/realtime?queryGroups=language&language=js
 
 /* 
-  할 것
-  - 읽음처리 구현
-  - 읽음 메시지 수 반영
-  - 입력중 구현
+  - 로그인
+  - 새로고침 시 메시지 보존 여부
 */
 
 export default function App() {
@@ -45,20 +43,24 @@ export default function App() {
         dispatch({ type: 'GET_MESSAGE', data: data as MessageDataPayload });
       })
       .on('broadcast', { event: 'opponent' }, (data) => {
-        const isMyself = data.payload.id === USER_ID;
+        const id: string = data.payload.id;
+        const isMyself = id === USER_ID;
 
-        if (!isMyself) return;
+        if (isMyself) return;
 
-        const isTyping = data.payload.isTyping;
-        // setOpponentState((prev) => ({ ...prev, isTyping }));
+        const isTyping: boolean = data.payload.isTyping;
+        const userData = { isTyping: isTyping, id: id };
+
+        dispatch({ type: 'SET_USER_MESSAGE_STATE', data: userData });
       });
 
     MY_CHANNEL
       /* 채팅방 연결 */
-      .on('presence', { event: 'sync' }, () => {})
-      .on('presence', { event: 'join' }, ({ key, newPresences }) => {
-        if (key === USER_ID) return;
-        dispatch({ type: 'ADD_USER_LIST', list: newPresences });
+      .on('presence', { event: 'sync' }, () => {
+        const presenceState = MY_CHANNEL.presenceState();
+        const myID = USER_ID;
+
+        dispatch({ type: 'ADD_USER_LIST', list: presenceState, myID });
       })
       .on('presence', { event: 'leave' }, ({ key }) => {
         if (key === USER_ID) return;
@@ -81,12 +83,24 @@ export default function App() {
   const title = state.category;
   const onlinePeopleCount = state.userList.length;
   const sentMsgCount = Object.keys(state.userMessages).reduce((acc, curr) => {
-    return state.userMessages[curr].messages.length + acc;
+    const userMessages = state.userMessages[curr].messages;
+    const notReadMessages = userMessages.filter(
+      (msg) => !msg.isRead && msg.id !== USER_ID
+    );
+    return notReadMessages.length + acc;
   }, 0);
 
   return (
     <DispatchContext.Provider value={dispatch}>
       <ReducerStateContext.Provider value={state}>
+        {/* HTML title */}
+        <title>
+          {sentMsgCount > 0
+            ? '챗봇 관리자 : 새로운 알림 ' + sentMsgCount + '개'
+            : '챗봇 관리자'}
+        </title>
+
+        {/* 챗봇 */}
         <div className={styles.wrap}>
           <div className={styles.listBox}>
             {/* 현재 카테고리 이름 */}

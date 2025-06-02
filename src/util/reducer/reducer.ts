@@ -1,19 +1,33 @@
 import { USER_ID, type MessageDataPayload } from '../const/common';
 
-export type PresenceType = { [key: string]: any };
+export type PresenceType = Record<string, any>;
+// export type PresenceType = { [key: string]: any };
 
-type Messages = {
+type Message = {
   id: MessageDataPayload['payload']['id'];
   text: MessageDataPayload['payload']['text'];
   send_at: MessageDataPayload['payload']['send_at'];
+  isRead: boolean;
+};
+
+const initMessage: Message = {
+  id: '',
+  isRead: false,
+  send_at: '',
+  text: '',
 };
 
 type UserMessages = {
   [key: string]: {
     userID: MessageDataPayload['payload']['id'];
     isTyping: MessageDataPayload['payload']['isTyping'];
-    messages: Messages[];
+    messages: Message[];
   };
+};
+
+type SetUserStateData = {
+  id: MessageDataPayload['payload']['id'];
+  isTyping: MessageDataPayload['payload']['isTyping'];
 };
 
 export type InitAppState = {
@@ -48,7 +62,9 @@ interface CloseChatAction {
 
 interface AddUserListAction {
   type: 'ADD_USER_LIST';
-  list: PresenceType[];
+  list: PresenceType;
+  myID: string;
+  // list: PresenceType[];
 }
 
 interface RemoveUserListAction {
@@ -61,13 +77,25 @@ interface GetMessageAction {
   data: MessageDataPayload;
 }
 
+interface SetUserMessageStateAction {
+  type: 'SET_USER_MESSAGE_STATE';
+  data: SetUserStateData;
+}
+
+interface ReadUserMessageAction {
+  type: 'READ_USER_MESSAGE';
+  id: string;
+}
+
 export type ActionType =
   | ChangeCategoryAction
   | OpenChatAction
   | CloseChatAction
   | AddUserListAction
   | RemoveUserListAction
-  | GetMessageAction;
+  | GetMessageAction
+  | SetUserMessageStateAction
+  | ReadUserMessageAction;
 
 export function reducer(state: InitAppState, action: ActionType) {
   switch (action.type) {
@@ -91,15 +119,20 @@ export function reducer(state: InitAppState, action: ActionType) {
     case 'CLOSE_CHAT': {
       return {
         ...state,
+        selectedID: '',
         isRoomClicked: false,
       };
     }
     case 'ADD_USER_LIST': {
-      const userList = action.list;
+      const onlineUsersList = action.list;
+      const myID = action.myID;
+      const filteredUserList = Object.entries(onlineUsersList)
+        .filter(([key]) => key !== myID) // 본인 ID 제외
+        .map(([_, value]) => value[0]); // 접속 상태 값 추출 (열려있는 탭 중 첫번째 정보)
 
       return {
         ...state,
-        userList: [...state.userList, ...userList],
+        userList: [...filteredUserList],
       };
     }
 
@@ -114,12 +147,15 @@ export function reducer(state: InitAppState, action: ActionType) {
     }
     case 'GET_MESSAGE': {
       const data = action.data.payload;
+      const selectedID = state.selectedID;
 
       const id = data.id.toString();
       const text = data.text;
       const send_at = data.send_at;
       const isTyping = data.isTyping;
-      const messages = { id, text: text, send_at: send_at };
+
+      const isRead = selectedID === id; // 채팅방 접속 중이면
+      const messages = { ...initMessage, id, text: text, send_at: send_at, isRead };
 
       /* 관리자 메시지 처리 */
       const isAdminMessage = id === USER_ID;
@@ -144,14 +180,15 @@ export function reducer(state: InitAppState, action: ActionType) {
       }
 
       /* 관리자외 메시지 처리 */
-      const isMessageDataExist = !state.userMessages[id];
+      const isMessageDataNotExist = !state.userMessages[id];
 
-      if (isMessageDataExist) {
+      if (isMessageDataNotExist) {
         return {
           ...state,
           userMessages: {
             ...state.userMessages,
             [id]: {
+              ...state.userMessages[id],
               userID: id,
               isTyping,
               messages: [messages],
@@ -160,21 +197,70 @@ export function reducer(state: InitAppState, action: ActionType) {
         };
       }
 
-      const updatedMessageData = {
-        ...state.userMessages[id],
-        isTyping,
-        messages: [...state.userMessages[id].messages, messages],
+      return {
+        ...state,
+        userMessages: {
+          ...state.userMessages,
+          [id]: {
+            ...state.userMessages[id],
+            isTyping,
+            messages: [...state.userMessages[id].messages, messages],
+          },
+        },
       };
+    }
+    case 'SET_USER_MESSAGE_STATE': {
+      const id = action.data.id;
+      const isTyping = action.data.isTyping;
+
+      /* 관리자외 메시지 처리 */
+      const isMessageDataNotExist = !state.userMessages[id];
+
+      if (isMessageDataNotExist) {
+        return {
+          ...state,
+          userMessages: {
+            ...state.userMessages,
+            [id]: {
+              userID: id,
+              isTyping,
+              messages: [],
+              isRead: false,
+            },
+          },
+        };
+      }
 
       return {
         ...state,
         userMessages: {
           ...state.userMessages,
-          [id]: updatedMessageData,
+          [id]: {
+            ...state.userMessages[id],
+            isTyping,
+          },
         },
       };
     }
+    case 'READ_USER_MESSAGE': {
+      const id = action.id;
 
+      const readMessages = state.userMessages[id].messages.map((msg) => ({
+        ...msg,
+        isRead: true,
+      }));
+
+      return {
+        ...state,
+        userMessages: {
+          ...state.userMessages,
+          [id]: {
+            ...state.userMessages[id],
+            messages: readMessages,
+          },
+        },
+      };
+    }
     default: {
       throw new Error('unexpected action type');
     }

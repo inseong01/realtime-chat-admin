@@ -79,7 +79,7 @@
 
   display: inline-block;
 
-  line-height: 24px;
+  line-height: 25px;
   word-break: break-all;
   overflow: hidden;
 
@@ -100,4 +100,65 @@
 }
 .mine .msg {
   background-color: white;
+}
+
+/* 입력 중 */
+.receive {
+  display: flex;
+
+  transform-origin: top left;
+  animation: scaleUp 0.3s ease-out;
+}
+
+@keyframes scaleUp {
+  0% {
+    transform: scale(0%);
+  }
+  50% {
+    transform: scale(105%);
+  }
+  100% {
+    transform: scale(100%);
+  }
+}
+
+.typing {
+  display: flex;
+  justify-content: center;
+
+  gap: 5px;
+}
+
+.typing span {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: block;
+  margin: 7px 0;
+}
+.typing span:nth-child(1) {
+  background-color: hsl(0 0% 70% / 1);
+  animation: bounce 1s infinite;
+}
+.typing span:nth-child(2) {
+  background-color: hsl(0 0% 70% / 1);
+  animation: bounce 1s infinite;
+  animation-delay: 0.1s;
+}
+.typing span:nth-child(3) {
+  background-color: hsl(0 0% 70% / 1);
+  animation: bounce 1s infinite;
+  animation-delay: 0.2s;
+}
+
+@keyframes bounce {
+  0% {
+    transform: scale(80%);
+  }
+  50% {
+    transform: scale(100%);
+  }
+  100% {
+    transform: scale(80%);
+  }
 }

@@ -43,7 +43,6 @@ function DataAmountDisplay({ count }: { count?: number }) {
 
   const isCountAble = count > 0;
   const countCSS = isCountAble ? styles.count : '';
-  const amount = count > 9 ? '9+' : count;
 
-  return <>{isCountAble && <div className={countCSS}>{amount}</div>}</>;
+  return <>{isCountAble && <div className={countCSS}></div>}</>;
 }

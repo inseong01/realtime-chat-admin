@@ -12,7 +12,7 @@ export type MessageDataPayload = {
     id: string;
     isTyping: boolean;
     send_at: string;
-    sender_id?: string;
+    // sender_id?: string;
     receiver_id?: string;
   };
 };
@@ -26,7 +26,7 @@ export const initMessages: MessageDataPayload[] = [
       id: USER_ID,
       isTyping: false,
       send_at: '',
-      sender_id: '',
+      // sender_id: '',
       receiver_id: '',
     },
   },
