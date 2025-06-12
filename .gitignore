@@ -11,7 +11,6 @@ node_modules
 dist
 dist-ssr
 *.local
-.env
 
 # Editor directories and files
 .vscode/*
@@ -24,9 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 
-.vercel
+.env
 /auto
 
-commit-msg.txt
-diff-files.txt
 file-status.txt
+diff-files.txt
+commit-msg.txt

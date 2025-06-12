@@ -1,70 +1,74 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 
-import { supabase } from './util/supabase/supabaseClient';
-import { USER_ID, type MessageDataPayload } from './util/const/common';
-import { initAppState, reducer } from './util/reducer/reducer';
-import { DispatchContext, ReducerStateContext } from './util/context/context';
+import { UserIDContextContext } from './util/context/global';
+import { ADMIN_ID, type CustomPresence, type MessageMetaData } from './util/const/const';
+import { supabase } from './util/supabase/supabase-client';
 
-import ICON_MESSAGE from './assets/icon-message.svg';
-import ICON_USER from './assets/icon-user.svg';
+import { adminReducer, initAdminAppState } from './feature/admin/reducer';
+import { AdminDispatchContext, AdminReducerStateContext } from './feature/admin/context';
 
-import styles from './App.module.css';
-import IconList from './components/icon-list/list-index';
-import CategoryContentDisplay from './feature/category-display/display-index';
+import './App.css';
+import AdminChatMode from './feature/admin/admin-index';
 
-// https://supabase.com/docs/guides/realtime?queryGroups=language&language=js
+const ID = ADMIN_ID;
 
-/* 
-  - 로그인
-  - 새로고침 시 메시지 보존 여부
-*/
+function App() {
+  const [isLogin] = useState(true);
 
-export default function App() {
-  const [state, dispatch] = useReducer(reducer, initAppState);
+  const [adminState, adminDispatch] = useReducer(adminReducer, initAdminAppState);
+
+  if (!isLogin) return <div>Nope</div>;
 
   useEffect(() => {
-    const userStatus = {
-      userID: USER_ID,
+    const userStatus: CustomPresence = {
+      userID: ID,
+      userName: 'ADMIN',
       online_at: new Date().toISOString(),
       isOnline: true,
+      isTyping: false,
+      messages: [],
     };
 
     const MY_CHANNEL = supabase
       /* 채팅방 설정 */
       .channel('channel_1', {
         config: {
-          presence: { key: USER_ID },
+          presence: { key: ID },
+          broadcast: {
+            self: true,
+          },
         },
       });
 
     MY_CHANNEL
       /* 데이터 송수신 */
       .on('broadcast', { event: 'send' }, (data) => {
-        dispatch({ type: 'GET_MESSAGE', data: data as MessageDataPayload });
+        adminDispatch({ type: 'GET_MESSAGE', data: data as MessageMetaData });
       })
       .on('broadcast', { event: 'opponent' }, (data) => {
         const id: string = data.payload.id;
-        const isMyself = id === USER_ID;
+        const isMyself = id === ADMIN_ID;
 
         if (isMyself) return;
 
         const isTyping: boolean = data.payload.isTyping;
         const userData = { isTyping: isTyping, id: id };
 
-        dispatch({ type: 'SET_USER_MESSAGE_STATE', data: userData });
+        adminDispatch({ type: 'SET_USER_MESSAGE_STATE', data: userData });
       });
 
     MY_CHANNEL
       /* 채팅방 연결 */
       .on('presence', { event: 'sync' }, () => {
-        const presenceState = MY_CHANNEL.presenceState();
-        const myID = USER_ID;
+        const presenceState = MY_CHANNEL.presenceState<CustomPresence>();
+        const myID = ADMIN_ID;
 
-        dispatch({ type: 'ADD_USER_LIST', list: presenceState, myID });
+        adminDispatch({ type: 'ADD_USER_LIST', list: presenceState, myID }); // 렌더링 2~3회 유발
       })
       .on('presence', { event: 'leave' }, ({ key }) => {
-        if (key === USER_ID) return;
-        dispatch({ type: 'REMOVE_USER_LIST', key });
+        if (key === ADMIN_ID) return;
+
+        adminDispatch({ type: 'UPDATE_USER_OFFLINE', key });
       });
 
     MY_CHANNEL
@@ -80,45 +84,27 @@ export default function App() {
     };
   }, []);
 
-  const title = state.category;
-  const onlinePeopleCount = state.userList.length;
-  const sentMsgCount = Object.keys(state.userMessages).reduce((acc, curr) => {
-    const userMessages = state.userMessages[curr].messages;
-    const notReadMessages = userMessages.filter(
-      (msg) => !msg.isRead && msg.id !== USER_ID
-    );
-    return notReadMessages.length + acc;
+  const receivedMsgCount = Object.keys(adminState.userList).reduce((acc, id) => {
+    const userMessages = adminState.userList[id].messages;
+    return acc + userMessages.filter((msg) => !msg.payload.isRead && msg.payload.id !== ADMIN_ID).length;
   }, 0);
+  const msgMention = receivedMsgCount > 0 ? `: 새로운 알림 ${receivedMsgCount > 99 ? '99+' : receivedMsgCount} 개` : '';
 
   return (
-    <DispatchContext.Provider value={dispatch}>
-      <ReducerStateContext.Provider value={state}>
-        {/* HTML title */}
-        <title>
-          {sentMsgCount > 0
-            ? '챗봇 관리자 : 새로운 알림 ' + sentMsgCount + '개'
-            : '챗봇 관리자'}
-        </title>
+    <>
+      {/* HTML title */}
+      <title>{`채팅 관리자 ${msgMention}`}</title>
 
-        {/* 챗봇 */}
-        <div className={styles.wrap}>
-          <div className={styles.listBox}>
-            {/* 현재 카테고리 이름 */}
-            <div className={styles.title}>{title}</div>
-
-            {/* 카테고리 별 화면 */}
-            <ul className={styles.displayBox}>
-              <CategoryContentDisplay />
-            </ul>
-          </div>
-
-          {/* 카테고리 아이콘 목록 */}
-          <ul className={styles.iconBox}>
-            <IconList src={ICON_USER} alt='접속인원' count={onlinePeopleCount} />
-            <IconList src={ICON_MESSAGE} alt='받은 메시지' count={sentMsgCount} />
-          </ul>
-        </div>
-      </ReducerStateContext.Provider>
-    </DispatchContext.Provider>
+      <UserIDContextContext.Provider value={ID}>
+        <AdminDispatchContext.Provider value={adminDispatch}>
+          <AdminReducerStateContext.Provider value={adminState}>
+            {/* 채팅방 - 관리자 */}
+            <AdminChatMode msgCount={receivedMsgCount} />
+          </AdminReducerStateContext.Provider>
+        </AdminDispatchContext.Provider>
+      </UserIDContextContext.Provider>
+    </>
   );
 }
+
+export default App;

@@ -1,0 +1,119 @@
+.wrap {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  padding: 40px;
+}
+
+/* 상단 */
+.top {
+  display: flex;
+  align-items: center;
+  gap: 120px;
+
+  border: 1px solid #c9c9c9;
+  border-radius: 12px;
+
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+  padding: 28px;
+}
+
+/* 하단 */
+.bottom {
+  width: 100%;
+  height: calc(100% - 20px - 88px); /* 헤더 + 공백 높이 */
+
+  display: flex;
+  gap: 20px;
+}
+
+.onlineListBox {
+  height: 100%;
+
+  flex: 1;
+
+  border: 1px solid #c9c9c9;
+  border-radius: 12px;
+
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+/* 하단 - 접속인원 제목 */
+.onlineListBox .header {
+  width: 100%;
+  min-height: 71px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: relative;
+
+  border-bottom: 1px solid #ddd;
+  box-sizing: border-box;
+
+  padding: 12px 8px;
+}
+
+.onlineListBox .titleBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+
+  cursor: default;
+}
+
+.onlineListBox .title {
+  color: #7c7c7c;
+  font-size: 18px;
+}
+
+/* 하단 - 접속인원 목록 */
+.onlineList {
+  overflow-y: auto;
+}
+
+.onlineList .none {
+  color: #606060;
+  font-size: 20px;
+
+  cursor: default;
+
+  padding: 12px;
+  padding-left: 30px;
+}
+
+/* 하단 - 채팅방 */
+.chatBox {
+  height: 100%;
+
+  flex: 2;
+
+  border: 1px solid #c9c9c9;
+  border-radius: 12px;
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.chatBox .none {
+  color: #606060;
+  font-size: 20px;
+}
+
+.chatBox[data-isclicked='false'] {
+  justify-content: center;
+  align-items: center;
+
+  cursor: default;
+}

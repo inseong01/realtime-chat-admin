@@ -1,0 +1,59 @@
+.msg {
+  max-width: 350px;
+
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+
+  font-size: 16px;
+  line-height: 20px;
+
+  display: inline-block;
+
+  box-sizing: border-box;
+  word-break: break-all;
+  overflow: hidden;
+
+  padding: 8px 12px;
+  margin: 4px 0;
+}
+
+/* 프로필 */
+.profile {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: aliceblue;
+  border-radius: 50%;
+
+  overflow: hidden;
+}
+
+/* 수신인 */
+[data-writer='self'] {
+  display: flex;
+  justify-content: end;
+  align-items: end;
+  gap: 10px;
+}
+[data-writer='self'] .msg {
+  color: white;
+  border-color: #336cb5;
+  background-color: #336cb5;
+  border-top-right-radius: 0;
+}
+
+/* 발신인 */
+[data-writer='other'] {
+  display: flex;
+  justify-content: start;
+  align-items: end;
+  gap: 10px;
+}
+[data-writer='other'] .msg {
+  background-color: #e6e6e6;
+  border-bottom-left-radius: 0;
+}
