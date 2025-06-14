@@ -72,7 +72,7 @@
 
 .onlineListBox .title {
   color: #7c7c7c;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 /* 하단 - 접속인원 목록 */
@@ -82,7 +82,7 @@
 
 .onlineList .none {
   color: #606060;
-  font-size: 20px;
+  font-size: 16px;
 
   cursor: default;
 
@@ -108,7 +108,7 @@
 
 .chatBox .none {
   color: #606060;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .chatBox[data-isclicked='false'] {

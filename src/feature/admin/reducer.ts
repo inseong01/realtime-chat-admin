@@ -40,7 +40,7 @@ interface GetMessageAction {
 }
 
 interface SetUserMessageStateAction {
-  type: 'SET_USER_MESSAGE_STATE';
+  type: 'SET_USER_TYPING_STATUS';
   data: {
     id: MessageMetaData['payload']['id'];
     isTyping: MessageMetaData['payload']['isTyping'];
@@ -154,7 +154,7 @@ export function adminReducer(state: InitAdminAppState, action: ActionType) {
         },
       };
     }
-    case 'SET_USER_MESSAGE_STATE': {
+    case 'SET_USER_TYPING_STATUS': {
       const id = action.data.id;
       const isTyping = action.data.isTyping;
 

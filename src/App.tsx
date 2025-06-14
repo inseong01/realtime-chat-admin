@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 
 import { UserIDContextContext } from './util/context/global';
 import { ADMIN_ID, type CustomPresence, type MessageMetaData } from './util/const/const';
@@ -13,11 +13,7 @@ import AdminChatMode from './feature/admin/admin-index';
 const ID = ADMIN_ID;
 
 function App() {
-  const [isLogin] = useState(true);
-
   const [adminState, adminDispatch] = useReducer(adminReducer, initAdminAppState);
-
-  if (!isLogin) return <div>Nope</div>;
 
   useEffect(() => {
     const userStatus: CustomPresence = {
@@ -54,7 +50,7 @@ function App() {
         const isTyping: boolean = data.payload.isTyping;
         const userData = { isTyping: isTyping, id: id };
 
-        adminDispatch({ type: 'SET_USER_MESSAGE_STATE', data: userData });
+        adminDispatch({ type: 'SET_USER_TYPING_STATUS', data: userData });
       });
 
     MY_CHANNEL

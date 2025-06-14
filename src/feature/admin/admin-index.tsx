@@ -18,13 +18,14 @@ export default function AdminChatMode({ msgCount }: { msgCount: number }) {
   const userList = state.userList;
 
   const userIdArr = Object.keys(userList);
+  const onlineUserArr = userIdArr.filter((key) => userList[key].isOnline);
 
   return (
     <UserIDContextContext.Provider value={ADMIN_ID}>
       <div className={styles.wrap}>
         {/* 접속현황 */}
         <div className={styles.top}>
-          <CountItemDisplay category='현재접속자' count={userIdArr.length} unit='명' />
+          <CountItemDisplay category='현재접속자' count={onlineUserArr.length} unit='명' />
 
           <CountItemDisplay category='읽지 않은 메시지' count={msgCount} unit='건' />
         </div>
