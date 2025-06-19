@@ -54,3 +54,22 @@ export type CustomPresence = {
   isTyping: boolean;
   messages: MessageMetaData[];
 };
+
+export const initCustomPresence: CustomPresence = {
+  presence_ref: '',
+  userID: '',
+  userName: '',
+  online_at: new Date().toISOString(),
+  isOnline: true,
+  isTyping: false,
+  messages: [],
+};
+
+export const userStatus: CustomPresence = {
+  userID: ADMIN_ID,
+  userName: 'ADMIN',
+  online_at: new Date().toISOString(),
+  isOnline: true,
+  isTyping: false,
+  messages: [],
+};

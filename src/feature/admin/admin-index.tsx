@@ -5,12 +5,13 @@ import { UserIDContextContext } from '../../util/context/global';
 
 import { AdminReducerStateContext } from './context';
 
+import CountItemDisplay from '../../components/chat/count-display/display-index';
+
 import styles from './admin-index.module.css';
 import OnlineUser from './online-user';
 import ChatRoomDisplay from './chat-room';
-import CountItemDisplay from '../../components/chat/count-display/display-index';
 
-export default function AdminChatMode({ msgCount }: { msgCount: number }) {
+export default function AdminChatMode() {
   const state = useContext(AdminReducerStateContext);
   const chatRoomRef = useRef<HTMLDivElement>(null);
 
@@ -19,6 +20,10 @@ export default function AdminChatMode({ msgCount }: { msgCount: number }) {
 
   const userIdArr = Object.keys(userList);
   const onlineUserArr = userIdArr.filter((key) => userList[key].isOnline);
+  const receivedMsgCount = Object.keys(userList).reduce((acc, id) => {
+    const userMessages = userList[id].messages;
+    return acc + userMessages.filter((msg) => !msg.payload.isRead && msg.payload.id !== ADMIN_ID).length;
+  }, 0);
 
   return (
     <UserIDContextContext.Provider value={ADMIN_ID}>
@@ -27,7 +32,7 @@ export default function AdminChatMode({ msgCount }: { msgCount: number }) {
         <div className={styles.top}>
           <CountItemDisplay category='현재접속자' count={onlineUserArr.length} unit='명' />
 
-          <CountItemDisplay category='읽지 않은 메시지' count={msgCount} unit='건' />
+          <CountItemDisplay category='읽지 않은 메시지' count={receivedMsgCount} unit='건' />
         </div>
 
         <div className={styles.bottom}>

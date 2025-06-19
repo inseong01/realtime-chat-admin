@@ -11,6 +11,7 @@ export default function OnlineUser({ id }: { id: MessageMetaData['payload']['id'
   const state = useContext(AdminReducerStateContext);
   const reducer = useContext(AdminDispatchContext);
 
+  const selectedID = state.selectedID;
   const user = state.userList[id];
   const isTyping = user.isTyping;
   const isOnline = user.isOnline;
@@ -29,6 +30,7 @@ export default function OnlineUser({ id }: { id: MessageMetaData['payload']['id'
 
   /* 채팅방 열기 */
   const onClickOpenBtn = () => {
+    if (id === selectedID) return;
     if (!latestMessage) return;
     if (!reducer) return;
 

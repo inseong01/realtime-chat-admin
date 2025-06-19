@@ -43,9 +43,13 @@
 
   - 본인 제외한 방문자 `presence` 상태 수집
 
-- `UPDATE_USER_OFFLINE`
+- `SET_USER_OFFLINE`
 
   - 방문자 `presence` 오프라인 상태 처리
+
+- `SYNC_USER_LIST`
+
+  - 방문자 온라인 목록 동기화 처리
 
 - `OPEN_CHAT`
 
@@ -58,6 +62,10 @@
   - 선택한 방문자 채팅방 닫기
 
   - 선택한 방문자 ID 비움
+
+- `RESET_ALL`
+
+  - 모든 데이터 초기화
 
 ## 설치 및 실행 방법
 
